@@ -1,0 +1,197 @@
+import java.util.ArrayList;
+
+public class War {
+	public ArrayList<Player> players = new ArrayList<Player>();
+	public Deck deck;
+	int numPlayers;
+	public Deck disPile;
+	
+	public War(int numPlayers) {
+		disPile = new Deck();
+		String[] suits= {"Clubs","Diamonds","Hearts","Spades"};
+		int[] ranks= {1,2,3,4,5,6,7,8,9,10,11,12,13};
+		this.deck = new Deck();
+		for(String suit: suits) {
+			for(int rank: ranks) {
+				this.deck.add(new Card(rank,suit));
+			}
+		}
+	this.numPlayers = numPlayers;
+	}
+	
+	public War()
+	{
+	disPile = new Deck();
+	String[] suits= {"Clubs","Diamonds","Hearts","Spades"};
+	int[] ranks= {1,2,3,4,5,6,7,8,9,10,11,12,13};
+	this.deck = new Deck();
+	for(String suit: suits) {
+		for(int rank: ranks) {
+			this.deck.add(new Card(rank,suit));
+		}
+	}
+	}
+	
+	
+	
+	public void deal() {
+		//Make Players
+		for(int k=1; k<(numPlayers+1); k++ ) {
+			players.add(new Player(k));
+		}
+		
+		//deal cards to players
+		int numCardOfHand = this.deck.size()/numPlayers;
+		for(int k=0; k<numPlayers; k++) {
+			for(int j=0; j<numCardOfHand; j++) {
+				//Card dealCards = this.deck.get(this.deck.size()-1);
+				(players.get(k)).hand.add(this.deck.get(this.deck.size()-1));
+				this.deck.remove(deck.size()-1);
+			}
+		}
+	}
+	
+	public boolean isEmpty(Player player) {
+		if (player.hand.size()==0) {
+			return true;
+		}
+		else
+		return false;
+	}
+	public void shuffle() {
+		deck.shuffle();
+		
+	}
+	
+	
+	public void playCard() {
+		for(int k=0; k<numPlayers; k++) {
+			
+			Card cardUsed = players.get(k).hand.get(0);
+			System.out.println("Player "+players.get(k)+" plays a "+cardUsed);
+			disPile.add(cardUsed);
+			players.get(k).hand.remove(0);
+		}
+		
+		
+		
+		for (int k=0; k<numPlayers; k++) {
+			if(this.isEmpty(players.get(k))){
+				players.remove(k);
+				numPlayers--;
+			}
+		}
+		
+		
+		
+		
+	}
+	
+	public void playWar() {
+		for (int k=0; k<numPlayers; k++) {
+			if(this.isEmpty(players.get(k))) {
+				return;
+
+		}
+			Card cardUsed = players.get(k).hand.get(0);
+			Card cardUsed1 = players.get(k+1).hand.get(0);
+		
+			for (int j=0; j<3; j++) {
+				System.out.println("Player "+players.get(k) +"plays xx card.");
+				
+				System.out.println("Player "+players.get(k+1) +"plays xx card.");
+				disPile.add(cardUsed);
+				players.get(k).hand.remove(0);
+				disPile.add(cardUsed1);
+				players.get(k+1).hand.remove(0);
+				
+				
+			}//end for loop
+			this.playCard();
+			
+			if(disPile.get(disPile.size()-2).compareTo(disPile.get(disPile.size()-1))>0){
+					
+					System.out.println(players.get(k)+" has won the war game!!!");
+					this.playCard();
+					//this.Rule();
+				}// end if method if player 1 won the war game.
+				
+			//else if ((players.get(k).hand.get(0)).compareTo(players.get(k+1).hand.get(0))<0) {
+			else if (disPile.get(disPile.size()-2).compareTo(disPile.get(disPile.size()-1))<0) {
+					
+					System.out.println(players.get(k+1)+" has won the war game!!!");
+					this.playCard();
+					//this.Rule();
+				}// end if player 2 won the war game
+				
+				else {
+					disPile.add(cardUsed1);
+					disPile.add(cardUsed);
+					
+					}
+		}
+		
+			this.playCard();
+			
+			//this.Rule();
+	
+	}// end method playWar()
+	
+	public void Rule() {
+		
+		this.playCard();
+		
+		// the game runs when there are more than 1 players.
+		while(true) {
+		
+			
+			//If the first player has higher rank, then wins
+			if(disPile.get(disPile.size()-2).compareTo(disPile.get(disPile.size()-1))>0) {
+				for(int j=0; j<disPile.size(); j++) {
+					players.get(0).hand.add(disPile.get(0));
+					disPile.remove(0);
+				}
+				System.out.println("Player "+players.get(0)+" wins this round!");
+				this.playCard();
+				
+				if(numPlayers ==1 ) {
+					System.out.println("Player "+players.get(0) +" wins the game.");
+					
+				}
+			}
+			
+			//If the second player has higher rank, then wins
+			else if(disPile.get(disPile.size()-2).compareTo(disPile.get(disPile.size()-1))<0) {
+				for (int j=0; j<disPile.size(); j++) {
+					players.get(1).hand.add(disPile.get(0));
+					disPile.remove(0);
+				}
+				System.out.println("Player "+players.get(1)+" wins this round!");
+				this.playCard();
+				
+				if (numPlayers ==1) {
+				System.out.println("Player "+players.get(0)+" wins the game.");
+					
+				}
+			}
+			
+			else{// tie {
+				System.out.println("War game starts. ");
+				this.playWar();
+				//this.playCard();
+				if (numPlayers ==1 ) {
+					System.out.println("Player "+players.get(0) +" won the war round.");
+					
+				}
+				
+		}	// end else
+			
+		}// end while
+		//this.playCard();
+	}
+	
+	
+	public String toString() {
+		return "There are "+numPlayers+ " playing this War game!";
+	}
+}// end class
